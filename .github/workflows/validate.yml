@@ -1,0 +1,35 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: leapmotor_notification_studio/requirements.txt
+      - run: pip install -r leapmotor_notification_studio/requirements.txt
+      - run: python -m compileall -q leapmotor_notification_studio/rootfs/app
+      - name: Verify public repository contains no private configuration
+        run: |
+          ! grep -R -E "009363|gsm_erwin|ha\.ilumina|b58472" . \
+            --exclude-dir=.git --exclude=validate.yml
+
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build amd64 add-on image
+        run: >-
+          docker build
+          --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-python:3.12-alpine3.20
+          leapmotor_notification_studio

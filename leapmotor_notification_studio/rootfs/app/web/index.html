@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Leapmotor Notification Studio</title>
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div><span class="eyebrow">LEAPMOTOR</span><h1>Notification Studio</h1><p data-i18n="tagline">Premium vehicle images and Companion App notifications.</p></div>
+      <div id="statusPill" class="pill"><span></span><b data-i18n="status_loading">Loading</b></div>
+    </header>
+
+    <nav class="tabs" aria-label="Configuration sections">
+      <button class="active" data-tab="vehicle" data-i18n="tab_vehicle">Vehicle</button><button data-tab="notifications" data-i18n="tab_notifications">Notifications</button><button data-tab="appearance" data-i18n="tab_appearance">Appearance</button><button data-tab="preview" data-i18n="tab_preview">Preview</button>
+    </nav>
+
+    <form id="settingsForm">
+      <section id="vehicle" class="panel active">
+        <div class="panel-head"><div><h2 data-i18n="vehicle_head">Vehicle connection</h2><p data-i18n="vehicle_sub">Select the existing Leapmotor entities in Home Assistant.</p></div><button type="button" class="secondary" id="discoverButton" data-i18n="discover">Detect automatically</button></div>
+        <div class="grid two">
+          <label><span data-i18n="car_name_label">Vehicle name</span><input id="car_name" required placeholder="My Leapmotor"></label>
+          <label><span data-i18n="vehicle_style_label">Vehicle appearance</span><select id="vehicle_style"></select></label>
+          <label><span data-i18n="entity_prefix_label">Entity prefix</span><select id="entity_prefix"><option value="">Select or detect a vehicle</option></select></label>
+          <label><span data-i18n="refresh_interval_label">Refresh interval</span> <small data-i18n="seconds">seconds</small><input id="refresh_interval" type="number" min="10" max="3600"></label>
+          <label><span data-i18n="language_label">Interface language</span><select id="language"><option value="en">English</option><option value="nl">Nederlands</option></select></label>
+        </div>
+      </section>
+
+      <section id="notifications" class="panel">
+        <div class="panel-head"><div><h2 data-i18n="notifications_head">Companion App notifications</h2><p data-i18n="notifications_sub">Send one rendered parking notification to multiple devices.</p></div><label class="switch"><input id="notifications_enabled" type="checkbox"><span></span></label></div>
+        <label><span data-i18n="notify_services_label">Receiving devices</span><select id="notify_services" multiple size="6"></select><small data-i18n="notify_services_hint">Use Ctrl/Cmd to select multiple devices.</small></label>
+        <div class="grid two"><label><span data-i18n="dashboard_path_label">Dashboard path</span><input id="dashboard_path" placeholder="/lovelace/0"></label><label><span data-i18n="trigger_delay_label">Parking delay</span> <small data-i18n="seconds">seconds</small><input id="trigger_delay" type="number" min="0" max="120"></label></div>
+      </section>
+
+      <section id="appearance" class="panel">
+        <div class="panel-head"><div><h2 data-i18n="appearance_head">Images and maps</h2><p data-i18n="appearance_sub">Choose where images are saved and optionally enable address lookup.</p></div></div>
+        <label><span data-i18n="output_folder_label">Output folder</span><input id="output_folder" placeholder="/media/leapmotor-notification-studio"></label>
+        <label><span data-i18n="geoapify_label">Geoapify API key</span><input id="geoapify_api_key" type="password" autocomplete="new-password" placeholder="Optional" data-i18n-placeholder="geoapify_placeholder"></label>
+        <div class="notice" data-i18n="geoapify_notice">The API key is stored only in the add-on's private data directory and is never included in images or logs.</div>
+      </section>
+
+      <section id="preview" class="panel">
+        <div class="panel-head"><div><h2 data-i18n="preview_head">Live preview</h2><p data-i18n="preview_sub">Generate all six images using the current Home Assistant values.</p></div><button type="button" class="secondary" id="renderButton" data-i18n="render">Render now</button></div>
+        <div class="preview-grid" id="previewGrid"></div>
+      </section>
+
+      <footer class="actions"><span id="message"></span><button type="submit" class="primary" data-i18n="save">Save configuration</button></footer>
+    </form>
+  </main>
+  <script src="static/app.js"></script>
+</body>
+</html>
