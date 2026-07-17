@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.5
+
+- Serve the Web UI's index page and static assets (app.js, style.css) with
+  `Cache-Control: no-cache`, so browsers always revalidate instead of
+  silently reusing a stale copy after an add-on update. Previously the
+  Preview tab could keep showing an old image count/copy after updating
+  until a hard refresh.
+- Made the preview subtitle generic ("all dashboard images") instead of
+  hardcoding a count that drifts as image types are added.
+
 ## 0.1.4
 
 - Show a real street map with a marker for the parking location (`parked.png`

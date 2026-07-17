@@ -32,7 +32,7 @@ class StudioApplication:
         await self.ha.close()
 
     async def index(self, request: web.Request) -> web.FileResponse:
-        return web.FileResponse(WEB / "index.html")
+        return web.FileResponse(WEB / "index.html", headers={"Cache-Control": "no-cache"})
 
     async def get_settings(self, request: web.Request) -> web.Response:
         return web.json_response(self.settings.public())
@@ -77,9 +77,17 @@ class StudioApplication:
         return web.FileResponse(path, headers={"Cache-Control": "no-store"})
 
 
+@web.middleware
+async def no_cache_static(request: web.Request, handler) -> web.StreamResponse:
+    response = await handler(request)
+    if request.path.startswith("/static/"):
+        response.headers["Cache-Control"] = "no-cache"
+    return response
+
+
 def create_app() -> web.Application:
     studio = StudioApplication()
-    app = web.Application(client_max_size=2 * 1024 * 1024)
+    app = web.Application(client_max_size=2 * 1024 * 1024, middlewares=[no_cache_static])
     app["studio"] = studio
     app.router.add_get("/", studio.index)
     app.router.add_get("/api/settings", studio.get_settings)
