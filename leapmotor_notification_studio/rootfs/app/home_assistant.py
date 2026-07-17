@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
+import logging
 import os
 from typing import Any
 
 from aiohttp import ClientSession, ClientTimeout
 
+LOGGER = logging.getLogger(__name__)
+
 
 class HomeAssistantClient:
     def __init__(self) -> None:
         token = os.environ.get("SUPERVISOR_TOKEN", "")
+        LOGGER.info("SUPERVISOR_TOKEN present: %s (length=%d)", bool(token), len(token))
         self.base_url = "http://supervisor/core/api"
         self.headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
         self._session: ClientSession | None = None
