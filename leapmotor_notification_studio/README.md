@@ -1,6 +1,7 @@
 # Leapmotor Notification Studio
 
-Open the **Web UI** after starting the add-on. The setup screen automatically
+**All settings are configured in the Web UI, not on the Configuration tab.**
+Start the add-on, then open the **Web UI**. The setup screen automatically
 detects compatible Leapmotor entity prefixes and mobile-app notify services.
 
 The add-on consumes existing Home Assistant entities; it does not contact the
