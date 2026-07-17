@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.7
+
+- Switch the parking map style from `toner-grey` (bright white/grey, clashed
+  with the dark UI) to `dark-matter`, a documented dark-themed Geoapify
+  style that actually fits the rest of the dashboard.
+
 ## 0.1.6
 
 - Fix the Geoapify Static Maps request always failing with 400: the marker

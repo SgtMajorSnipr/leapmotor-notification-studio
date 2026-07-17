@@ -128,7 +128,7 @@ class StudioEngine:
 
     async def fetch_map_image(self, coordinates: Coordinates) -> bytes | None:
         query = urlencode({
-            "style": "toner-grey", "width": 940, "height": 480, "zoom": 15,
+            "style": "dark-matter", "width": 940, "height": 480, "zoom": 15,
             "center": f"lonlat:{coordinates.longitude},{coordinates.latitude}",
             "marker": f"lonlat:{coordinates.longitude},{coordinates.latitude};color:#5cdd97;size:large",
             "apiKey": self.settings.geoapify_api_key,
