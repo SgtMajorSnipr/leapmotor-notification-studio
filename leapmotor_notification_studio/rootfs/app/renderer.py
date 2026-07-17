@@ -221,7 +221,12 @@ class VehicleRenderer:
         if d.map_image:
             try:
                 tile = Image.open(io.BytesIO(d.map_image)).convert("RGB")
-                c.image.alpha_composite(rounded_image(tile, size, 28), (x0, y0))
+                ratio = max(size[0] / tile.width, size[1] / tile.height)
+                resized = tile.resize((round(tile.width * ratio), round(tile.height * ratio)), Image.Resampling.LANCZOS)
+                left = (resized.width - size[0]) // 2
+                top = (resized.height - size[1]) // 2
+                cropped = resized.crop((left, top, left + size[0], top + size[1]))
+                c.image.alpha_composite(rounded_image(cropped, size, 28), (x0, y0))
                 return
             except Exception:
                 pass

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.8
+
+- Fix the parking map looking stretched/distorted: it was resized directly
+  to the card's box size regardless of aspect ratio. Now cropped-to-fill
+  (same technique as the vehicle hero photos) so the map is never squished.
+
 ## 0.1.7
 
 - Switch the parking map style from `toner-grey` (bright white/grey, clashed
