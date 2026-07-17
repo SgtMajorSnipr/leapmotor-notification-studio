@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.9
+
+- Preview grid now shows 4 images per row instead of 3, so the 7 dashboard
+  images lay out as 4+3 rather than 3+3+1.
+
 ## 0.1.8
 
 - Fix the parking map looking stretched/distorted: it was resized directly
