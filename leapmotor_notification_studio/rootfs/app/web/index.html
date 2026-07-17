@@ -14,7 +14,7 @@
     </header>
 
     <nav class="tabs" aria-label="Configuration sections">
-      <button class="active" data-tab="vehicle" data-i18n="tab_vehicle">Vehicle</button><button data-tab="notifications" data-i18n="tab_notifications">Notifications</button><button data-tab="appearance" data-i18n="tab_appearance">Appearance</button><button data-tab="preview" data-i18n="tab_preview">Preview</button>
+      <button class="active" data-tab="vehicle" data-i18n="tab_vehicle">Vehicle</button><button data-tab="notifications" data-i18n="tab_notifications">Notifications</button><button data-tab="appearance" data-i18n="tab_appearance">Appearance</button><button data-tab="preview" data-i18n="tab_preview">Preview</button><button data-tab="paths" data-i18n="tab_paths">Paths</button>
     </nav>
 
     <form id="settingsForm">
@@ -44,9 +44,12 @@
 
       <section id="preview" class="panel">
         <div class="panel-head"><div><h2 data-i18n="preview_head">Live preview</h2><p data-i18n="preview_sub">Generate all dashboard images using the current Home Assistant values.</p></div><button type="button" class="secondary" id="renderButton" data-i18n="render">Render now</button></div>
-        <div class="paths-head"><h3 data-i18n="paths_head">Image paths for your dashboard</h3><p data-i18n="paths_sub">Use these in a picture card or the swipe-card example from the docs.</p></div>
-        <div class="paths" id="pathsList"></div>
         <div class="preview-grid" id="previewGrid"></div>
+      </section>
+
+      <section id="paths" class="panel">
+        <div class="panel-head"><div><h2 data-i18n="paths_head">Image paths for your dashboard</h2><p data-i18n="paths_sub">Use these in a picture card or the swipe-card example from the docs.</p></div></div>
+        <div class="paths" id="pathsList"></div>
       </section>
 
       <footer class="actions"><span id="message"></span><button type="submit" class="primary" data-i18n="save">Save configuration</button></footer>

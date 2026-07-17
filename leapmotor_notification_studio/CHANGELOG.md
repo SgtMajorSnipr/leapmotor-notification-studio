@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.11
+
+- Move the image-paths list to its own "Paths" tab instead of stacking it
+  above the preview grid.
+
 ## 0.1.10
 
 - Preview tab now lists the `/media/local/...` path for each dashboard
