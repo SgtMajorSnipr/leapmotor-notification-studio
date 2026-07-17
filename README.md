@@ -12,11 +12,12 @@ sessions and keeps cloud polling under the provider's control.
 
 - Professional Home Assistant Ingress configuration screen
 - Automatic Leapmotor vehicle and Companion App discovery
-- Bundled B10, C10, T03 and B05 hero and tyre-view vehicle artwork
+- Bundled hero and tyre-view vehicle artwork for B10, C10, T03 and B05, across
+  their official colour variants
 - Six persistent images: overview, parking, charging, climate, tyres and security
-- Realistic European Deep Purple B10 visuals, including a tyre top view
 - State-change detection with configurable background refresh interval
-- Multi-device parking notifications with independent error handling
+- Multi-device parking notifications with independent error handling —
+  optional, and disabled independently of image rendering
 - Optional Geoapify reverse geocoding
 - Persistent settings stored in the add-on's private `/data` directory
 - Runs without AppDaemon, Node-RED, a browser renderer or external scripts
@@ -79,6 +80,28 @@ cards:
 
 `custom:swipe-card` is optional and must be installed separately. Standard
 Home Assistant picture cards work without it.
+
+## Notifications are optional
+
+The **Notifications** tab has an **Enable notifications** switch. Turning it
+off stops the add-on from sending anything to the Companion App while leaving
+image rendering untouched — useful if you only want the dashboard images and
+don't care about parking alerts.
+
+## Adding vehicle variants
+
+Vehicle styles are discovered automatically from
+`leapmotor_notification_studio/rootfs/app/assets/vehicles/`. To add a new
+model or colour, no code changes are needed:
+
+1. Create a folder named `<model>-<colour>`, for example `b10-galaxy-silver`.
+2. Add a half-side `hero.png` and a top-down `top.png` to it.
+3. Optionally add a `meta.json` (`{"model": "B10", "colour": "Galaxy Silver"}`)
+   to override the display label; otherwise it is derived from the folder
+   name.
+
+The variant appears in the vehicle-style picker immediately, no restart
+required.
 
 ## Privacy and security
 
