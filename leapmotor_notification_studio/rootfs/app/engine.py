@@ -128,11 +128,11 @@ class StudioEngine:
 
     async def fetch_map_image(self, coordinates: Coordinates) -> bytes | None:
         query = urlencode({
-            "style": "dark-matter", "width": 940, "height": 480, "zoom": 15,
+            "style": "toner-grey", "width": 940, "height": 480, "zoom": 15,
             "center": f"lonlat:{coordinates.longitude},{coordinates.latitude}",
-            "marker": f"lonlat:{coordinates.longitude},{coordinates.latitude};color:%235cdd97;size:large",
+            "marker": f"lonlat:{coordinates.longitude},{coordinates.latitude};color:#5cdd97;size:large",
             "apiKey": self.settings.geoapify_api_key,
-        })
+        }, safe=":,;")
         try:
             async with ClientSession(timeout=ClientTimeout(total=10)) as session:
                 async with session.get(f"https://maps.geoapify.com/v1/staticmap?{query}") as response:

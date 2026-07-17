@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.6
+
+- Fix the Geoapify Static Maps request always failing with 400: the marker
+  colour was double URL-encoded (`%23` manually written, then re-encoded to
+  `%2523` by `urlencode()`), and `dark-matter` is not a valid style name.
+  The marker/center values now use `urlencode(..., safe=":,;")` matching
+  Geoapify's documented format, and the style is `toner-grey`.
+
 ## 0.1.5
 
 - Serve the Web UI's index page and static assets (app.js, style.css) with
