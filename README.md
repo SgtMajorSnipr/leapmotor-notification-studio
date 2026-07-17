@@ -18,7 +18,8 @@ vehicle sessions and keeps cloud polling under the provider's control.
 - State-change detection with a configurable background refresh interval
 - Multi-device parking notifications — optional, and independent from image
   rendering
-- Optional Geoapify reverse geocoding for the parking location
+- Optional Geoapify reverse geocoding and a real street map for the parking
+  location
 - Settings are kept private to the add-on
 
 ## Installation
@@ -66,6 +67,8 @@ cards:
     image: /media/local/leapmotor-notification-studio/tyres.png
   - type: picture
     image: /media/local/leapmotor-notification-studio/security.png
+  - type: picture
+    image: /media/local/leapmotor-notification-studio/dashboard_set.png
 ```
 
 `custom:swipe-card` is optional and must be installed separately. Standard
@@ -81,7 +84,8 @@ don't care about parking alerts.
 ## Privacy and security
 
 - No vehicle credentials are requested or stored.
-- Geoapify is optional; its key is masked in the UI and stored privately.
+- Geoapify is optional; its key is masked in the UI, stored privately, and
+  only sent to Geoapify's own reverse-geocoding and static-map endpoints.
 - Home Assistant access uses the short-lived token Supervisor gives the
   add-on.
 

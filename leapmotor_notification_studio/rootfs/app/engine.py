@@ -100,11 +100,13 @@ class StudioEngine:
         address = next((str(attributes[key]) for key in ("address", "friendly_location", "place_name") if attributes.get(key)), "")
         if not address and coordinates and s.geoapify_api_key:
             address = await self.reverse_geocode(coordinates)
+        map_image = await self.fetch_map_image(coordinates) if coordinates and s.geoapify_api_key else None
         tyre = lambda suffix: (lambda value: value / 100 if value > 20 else value)(number("sensor", suffix))
         return VehicleSnapshot(
             battery=number("sensor", "battery"), range_km=number("sensor", "range"),
             odometer_km=number("sensor", "odometer"), state=state("sensor", "state", "Unknown"),
             last_seen=state("sensor", "last_seen", "Unknown"), coordinates=coordinates, address=address,
+            map_image=map_image,
             charging=boolean("binary_sensor", "charging"), plug_connected=boolean("binary_sensor", "plug_connected"),
             charge_power=number("sensor", "charge_power"), charge_current=number("sensor", "charge_current"),
             charge_voltage=number("sensor", "charge_voltage"), charge_remaining=state("sensor", "charge_time_remaining", "—"),
@@ -123,6 +125,22 @@ class StudioEngine:
                 response.raise_for_status()
                 features = (await response.json()).get("features", [])
         return features[0].get("properties", {}).get("formatted", "") if features else ""
+
+    async def fetch_map_image(self, coordinates: Coordinates) -> bytes | None:
+        query = urlencode({
+            "style": "dark-matter", "width": 940, "height": 480, "zoom": 15,
+            "center": f"lonlat:{coordinates.longitude},{coordinates.latitude}",
+            "marker": f"lonlat:{coordinates.longitude},{coordinates.latitude};color:%235cdd97;size:large",
+            "apiKey": self.settings.geoapify_api_key,
+        })
+        try:
+            async with ClientSession(timeout=ClientTimeout(total=10)) as session:
+                async with session.get(f"https://maps.geoapify.com/v1/staticmap?{query}") as response:
+                    response.raise_for_status()
+                    return await response.read()
+        except Exception:
+            LOGGER.warning("Map image fetch failed", exc_info=True)
+            return None
 
     def _parked_image_url(self) -> str:
         folder = Path(self.settings.output_folder)

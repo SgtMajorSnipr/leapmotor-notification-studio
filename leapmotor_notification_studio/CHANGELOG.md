@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.4
+
+- Show a real street map with a marker for the parking location (`parked.png`
+  and the Location card in `dashboard_set.png`), fetched from Geoapify's
+  Static Maps API using the same key as reverse geocoding. Falls back to a
+  map-icon placeholder when no Geoapify key is set or the fetch fails.
+- Fix `fit()` always appending an ellipsis even when the text already fit.
+
 ## 0.1.3
 
 - Add `dashboard_set.png`, a seventh persistent image combining battery &

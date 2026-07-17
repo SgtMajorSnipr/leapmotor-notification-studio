@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable
@@ -107,8 +108,11 @@ class VehicleRenderer:
     def parked(self, d: VehicleSnapshot, name: str, out: Path) -> Path:
         L = self.language
         c = self.base(name, t("parked_safely", L)); c.card((54, 754, 1026, 1118)); c.rows((("battery", t("battery", L), f"{d.battery:.0f} %"), ("range", t("remaining_range", L), f"{d.range_km:.0f} km"), ("clock", t("status", L), t("locked", L) if d.locked else t("unlocked", L))))
-        c.card((54, 1154, 1026, 1712)); c.draw.text((92, 1200), t("parking_location", L), font=font(36, True), fill=TEXT); c.draw.rounded_rectangle((86, 1280, 994, 1628), 34, fill=CARD_ALT)
-        location = d.address or (d.coordinates.display if d.coordinates else t("location_unavailable", L)); c.draw.text((130, 1400), self.fit(c, location, 790, 36), font=font(36, True), fill=TEXT)
+        c.card((54, 1154, 1026, 1712)); c.draw.text((92, 1200), t("parking_location", L), font=font(36, True), fill=TEXT)
+        self.draw_map(c, (86, 1250, 994, 1544), d)
+        location = d.address or (d.coordinates.display if d.coordinates else t("location_unavailable", L))
+        c.image.alpha_composite(icon("location", 32), (86, 1580))
+        c.draw.text((130, 1586), self.fit(c, location, 800, 32), font=font(32, True), fill=TEXT)
         return c.save(out)
 
     def charging(self, d: VehicleSnapshot, name: str, out: Path) -> Path:
@@ -204,11 +208,25 @@ class VehicleRenderer:
         location_box = (x2, y3, x2 + col_w, y3 + row_h)
         c.card(location_box)
         c.draw.text((x2 + 24, y3 + 20), t("location", L), font=font(28, True), fill=TEXT)
+        self.draw_map(c, (x2 + 24, y3 + 68, x2 + col_w - 24, y3 + 244), d)
         place = d.address or (d.coordinates.display if d.coordinates else t("location_unavailable", L))
-        c.draw.text((x2 + 24, y3 + 78), self.fit(c, place, col_w - 48, 27), font=font(27, True), fill=TEXT)
-        c.draw.text((x2 + 24, y3 + 130), f"{t('status', L)}: {d.state}", font=font(22), fill=MUTED)
+        c.draw.text((x2 + 24, y3 + 260), self.fit(c, place, col_w - 48, 22), font=font(22, True), fill=TEXT)
 
         return c.save(out)
+
+    @staticmethod
+    def draw_map(c: Canvas, box: tuple[int, int, int, int], d: VehicleSnapshot) -> None:
+        x0, y0, x1, y1 = box
+        size = (x1 - x0, y1 - y0)
+        if d.map_image:
+            try:
+                tile = Image.open(io.BytesIO(d.map_image)).convert("RGB")
+                c.image.alpha_composite(rounded_image(tile, size, 28), (x0, y0))
+                return
+            except Exception:
+                pass
+        c.draw.rounded_rectangle(box, 28, fill=CARD_ALT)
+        c.image.alpha_composite(icon("map", 44), (x0 + (size[0] - 44) // 2, y0 + (size[1] - 44) // 2))
 
     @staticmethod
     def time(value: str) -> str:
@@ -218,6 +236,7 @@ class VehicleRenderer:
     @staticmethod
     def fit(c: Canvas,text: str,width: int,size: int) -> str:
         f=font(size,True)
+        if not text or c.draw.textlength(text,font=f)<=width: return text
         while text and c.draw.textlength(text+"…",font=f)>width: text=text[:-1]
         return text.rstrip()+"…" if text else ""
 

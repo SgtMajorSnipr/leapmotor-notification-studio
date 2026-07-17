@@ -22,6 +22,7 @@ class VehicleSnapshot:
     last_seen: str = "Unknown"
     coordinates: Coordinates | None = None
     address: str = ""
+    map_image: bytes | None = None
     charging: bool = False
     plug_connected: bool = False
     charge_power: float = 0
