@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.10
+
+- Preview tab now lists the `/media/local/...` path for each dashboard
+  image, with a one-click copy button, computed from the configured output
+  folder — so you don't have to work out the paths by hand to build your
+  Lovelace dashboard.
+
 ## 0.1.9
 
 - Preview grid now shows 4 images per row instead of 3, so the 7 dashboard
