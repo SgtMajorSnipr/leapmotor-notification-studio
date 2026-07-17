@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.3
+
+- Add `dashboard_set.png`, a seventh persistent image combining battery &
+  range, security, charging, climate, tyre pressure and location into one
+  complete overview dashboard.
+- Hide the sunshade row on T03 (no sunshade equipment).
+
 ## 0.1.2
 
 - Fix SUPERVISOR_TOKEN never reaching the app: the container's CMD now runs

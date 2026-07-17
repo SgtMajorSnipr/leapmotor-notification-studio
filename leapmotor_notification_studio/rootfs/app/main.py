@@ -69,7 +69,7 @@ class StudioApplication:
 
     async def image(self, request: web.Request) -> web.StreamResponse:
         name = request.match_info["name"]
-        if name not in {"overview", "parked", "charging", "climate", "tyres", "security"}:
+        if name not in {"overview", "parked", "charging", "climate", "tyres", "security", "dashboard_set"}:
             raise web.HTTPNotFound()
         path = Path(self.settings.output_folder) / f"{name}.png"
         if not path.exists():

@@ -58,6 +58,20 @@ class Canvas:
         width = self.draw.textlength(value, font=value_font)
         self.draw.text((980 - width, y), value, font=value_font, fill=ACCENT if ok else DANGER)
 
+    def compact_rows(self, box: tuple[int, int, int, int], title: str, rows: Iterable[tuple[str, str, str, tuple[int, int, int]]]) -> None:
+        x0, y0, x1, y1 = box
+        self.draw.text((x0 + 24, y0 + 20), title, font=font(28, True), fill=TEXT)
+        rows = list(rows)
+        top = y0 + 72
+        step = (y1 - 14 - top) / len(rows)
+        for index, (icon_name, label, value, color) in enumerate(rows):
+            y = int(top + index * step)
+            self.image.alpha_composite(icon(icon_name, 32), (x0 + 24, y))
+            self.draw.text((x0 + 66, y + 4), label, font=font(22), fill=MUTED)
+            value_font = font(25, True)
+            width = self.draw.textlength(value, font=value_font)
+            self.draw.text((x1 - 24 - width, y + 2), value, font=value_font, fill=color)
+
     def save(self, path: Path) -> Path:
         path.parent.mkdir(parents=True, exist_ok=True)
         self.image.convert("RGB").save(path, "PNG", compress_level=4)
@@ -74,7 +88,8 @@ class VehicleRenderer:
         return [method(data, car_name, folder / filename) for method, filename in (
             (self.overview, "overview.png"), (self.parked, "parked.png"),
             (self.charging, "charging.png"), (self.climate, "climate.png"),
-            (self.tyres, "tyres.png"), (self.security, "security.png"))]
+            (self.tyres, "tyres.png"), (self.security, "security.png"),
+            (self.dashboard_set, "dashboard_set.png"))]
 
     def base(self, car_name: str, subtitle: str) -> Canvas:
         canvas = Canvas(car_name, subtitle, ROOT / "vehicles" / self.vehicle_style / "hero.png")
@@ -125,6 +140,74 @@ class VehicleRenderer:
         c.card((54,1154,1026,1712)); c.draw.text((92,1200),t("access_points", L),font=font(36,True),fill=TEXT); c.status(1300,t("boot", L),t("open", L) if d.trunk else t("closed", L),not d.trunk)
         if has_sunshade: c.status(1415,t("sunshade", L),t("open", L) if d.sunshade else t("closed", L),not d.sunshade)
         safe=d.locked and not d.any_door and not d.any_window and not d.trunk; c.draw.text((355,1580),t("vehicle_secured", L) if safe else t("attention_required", L),font=font(42,True),fill=ACCENT if safe else DANGER)
+        return c.save(out)
+
+    def dashboard_set(self, d: VehicleSnapshot, name: str, out: Path) -> Path:
+        L = self.language
+        has_sunshade = not self.vehicle_style.startswith("t03")
+        c = self.base(name, t("full_overview", L))
+
+        battery_rows = [
+            ("battery", t("battery", L), f"{d.battery:.0f} %", TEXT),
+            ("range", t("remaining_range", L), f"{d.range_km:.0f} km", TEXT),
+            ("range", t("odometer", L), f"{d.odometer_km:,.0f} km".replace(",", "."), TEXT),
+            ("clock", t("last_update", L), self.time(d.last_seen), MUTED),
+        ]
+        security_rows = [
+            ("location", t("door_lock", L), t("locked", L) if d.locked else t("unlocked", L), ACCENT if d.locked else DANGER),
+            ("location", t("doors", L), t("open", L) if d.any_door else t("closed", L), DANGER if d.any_door else ACCENT),
+            ("location", t("windows", L), t("open", L) if d.any_window else t("closed", L), DANGER if d.any_window else ACCENT),
+            ("location", t("boot", L), t("open", L) if d.trunk else t("closed", L), DANGER if d.trunk else ACCENT),
+        ]
+        if has_sunshade:
+            security_rows.append(("location", t("sunshade", L), t("open", L) if d.sunshade else t("closed", L), DANGER if d.sunshade else ACCENT))
+        charging_rows = [
+            ("charge", t("status", L), t("charging", L) if d.charging else t("not_charging", L), ACCENT if d.charging else MUTED),
+            ("charge", t("charging_power", L), f"{d.charge_power:g} kW", TEXT),
+            ("charge", t("current_voltage", L), f"{d.charge_current:g} A · {d.charge_voltage:g} V", TEXT),
+            ("battery", t("charge_limit", L), f"{d.charge_limit:.0f} %", TEXT),
+            ("clock", t("time_remaining", L), d.charge_remaining, MUTED),
+        ]
+        climate_rows = [
+            ("clock", t("status", L), d.climate_mode if d.climate else t("climate_off", L), ACCENT if d.climate else MUTED),
+            ("clock", t("inside_temperature", L), f"{d.inside_temp:g} °C", TEXT),
+            ("clock", t("target_temperature", L), f"{d.target_temp:g} °C", TEXT),
+            ("range", t("fan_level", L), f"{t('level', L)} {d.fan_level:g}", TEXT),
+        ]
+
+        row_h, gap, col_w, col_gap = 353, 20, 474, 24
+        x1, x2 = 54, 54 + col_w + col_gap
+        y1, y2, y3 = 754, 754 + row_h + gap, 754 + 2 * (row_h + gap)
+
+        c.card((x1, y1, x1 + col_w, y1 + row_h)); c.compact_rows((x1, y1, x1 + col_w, y1 + row_h), t("battery_range", L), battery_rows)
+        c.card((x2, y1, x2 + col_w, y1 + row_h)); c.compact_rows((x2, y1, x2 + col_w, y1 + row_h), t("security", L), security_rows)
+        c.card((x1, y2, x1 + col_w, y2 + row_h)); c.compact_rows((x1, y2, x1 + col_w, y2 + row_h), t("charging_details", L), charging_rows)
+        c.card((x2, y2, x2 + col_w, y2 + row_h)); c.compact_rows((x2, y2, x2 + col_w, y2 + row_h), t("climate", L), climate_rows)
+
+        tyre_box = (x1, y3, x1 + col_w, y3 + row_h)
+        c.card(tyre_box)
+        c.draw.text((x1 + 24, y3 + 20), t("tyre_pressure", L), font=font(28, True), fill=TEXT)
+        chip_w, chip_h, chip_gap = 206, 122, 14
+        chip_top = y3 + 74
+        chips = (
+            (t("front_left", L), d.tyre_fl, x1 + 24, chip_top),
+            (t("front_right", L), d.tyre_fr, x1 + 24 + chip_w + chip_gap, chip_top),
+            (t("rear_left", L), d.tyre_rl, x1 + 24, chip_top + chip_h + chip_gap),
+            (t("rear_right", L), d.tyre_rr, x1 + 24 + chip_w + chip_gap, chip_top + chip_h + chip_gap),
+        )
+        for label, value, cx, cy in chips:
+            color = self.tyre_color(value)
+            c.draw.rounded_rectangle((cx, cy, cx + chip_w, cy + chip_h), 22, fill=CARD_ALT, outline=color, width=3)
+            c.draw.text((cx + 18, cy + 14), label, font=font(20), fill=MUTED)
+            c.draw.text((cx + 18, cy + 44), f"{value:g} bar", font=font(28, True), fill=color)
+
+        location_box = (x2, y3, x2 + col_w, y3 + row_h)
+        c.card(location_box)
+        c.draw.text((x2 + 24, y3 + 20), t("location", L), font=font(28, True), fill=TEXT)
+        place = d.address or (d.coordinates.display if d.coordinates else t("location_unavailable", L))
+        c.draw.text((x2 + 24, y3 + 78), self.fit(c, place, col_w - 48, 27), font=font(27, True), fill=TEXT)
+        c.draw.text((x2 + 24, y3 + 130), f"{t('status', L)}: {d.state}", font=font(22), fill=MUTED)
+
         return c.save(out)
 
     @staticmethod

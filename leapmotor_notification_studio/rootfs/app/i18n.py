@@ -16,6 +16,8 @@ STRINGS: dict[str, dict[str, str]] = {
         "vehicle_security": "Vehicle security", "door_lock": "Door lock", "doors": "Doors", "windows": "Windows",
         "open": "Open", "closed": "Closed", "access_points": "Access points", "boot": "Boot", "sunshade": "Sunshade",
         "vehicle_secured": "Vehicle secured", "attention_required": "Attention required", "unknown": "Unknown",
+        "full_overview": "Complete overview", "battery_range": "Battery & range", "security": "Security",
+        "climate": "Climate", "location": "Location", "current_voltage": "Current / voltage",
     },
     "nl": {
         "battery": "Batterij", "remaining_range": "Resterende actieradius", "last_update": "Laatste update",
@@ -32,6 +34,8 @@ STRINGS: dict[str, dict[str, str]] = {
         "vehicle_security": "Voertuigbeveiliging", "door_lock": "Portierslot", "doors": "Portieren", "windows": "Ramen",
         "open": "Open", "closed": "Gesloten", "access_points": "Toegangspunten", "boot": "Kofferbak", "sunshade": "Zonnescherm",
         "vehicle_secured": "Voertuig beveiligd", "attention_required": "Aandacht vereist", "unknown": "Onbekend",
+        "full_overview": "Volledig overzicht", "battery_range": "Batterij & actieradius", "security": "Beveiliging",
+        "climate": "Klimaat", "location": "Locatie", "current_voltage": "Stroom / spanning",
     },
 }
 

@@ -13,8 +13,8 @@ vehicle sessions and keeps cloud polling under the provider's control.
 - Automatic Leapmotor vehicle and Companion App discovery
 - Vehicle artwork for B10, C10, T03 and B05, across their official colour
   variants
-- Six persistent images: overview, parking, charging, climate, tyres and
-  security
+- Seven persistent images: overview, parking, charging, climate, tyres,
+  security and a combined full-overview dashboard
 - State-change detection with a configurable background refresh interval
 - Multi-device parking notifications — optional, and independent from image
   rendering
@@ -44,6 +44,7 @@ dashboards as:
 /media/local/leapmotor-notification-studio/climate.png
 /media/local/leapmotor-notification-studio/tyres.png
 /media/local/leapmotor-notification-studio/security.png
+/media/local/leapmotor-notification-studio/dashboard_set.png
 ```
 
 ## Swipe card example
