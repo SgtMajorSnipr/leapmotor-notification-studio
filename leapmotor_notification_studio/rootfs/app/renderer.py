@@ -120,8 +120,11 @@ class VehicleRenderer:
 
     def security(self, d: VehicleSnapshot, name: str, out: Path) -> Path:
         L = self.language
+        has_sunshade = not self.vehicle_style.startswith("t03")
         c=self.base(name,t("vehicle_security", L)); c.card((54,754,1026,1118)); c.rows((("location",t("door_lock", L),t("locked", L) if d.locked else t("unlocked", L)),("location",t("doors", L),t("open", L) if d.any_door else t("closed", L)),("location",t("windows", L),t("open", L) if d.any_window else t("closed", L))))
-        c.card((54,1154,1026,1712)); c.draw.text((92,1200),t("access_points", L),font=font(36,True),fill=TEXT); c.status(1300,t("boot", L),t("open", L) if d.trunk else t("closed", L),not d.trunk); c.status(1415,t("sunshade", L),t("open", L) if d.sunshade else t("closed", L),not d.sunshade); safe=d.locked and not d.any_door and not d.any_window and not d.trunk; c.draw.text((355,1580),t("vehicle_secured", L) if safe else t("attention_required", L),font=font(42,True),fill=ACCENT if safe else DANGER)
+        c.card((54,1154,1026,1712)); c.draw.text((92,1200),t("access_points", L),font=font(36,True),fill=TEXT); c.status(1300,t("boot", L),t("open", L) if d.trunk else t("closed", L),not d.trunk)
+        if has_sunshade: c.status(1415,t("sunshade", L),t("open", L) if d.sunshade else t("closed", L),not d.sunshade)
+        safe=d.locked and not d.any_door and not d.any_window and not d.trunk; c.draw.text((355,1580),t("vehicle_secured", L) if safe else t("attention_required", L),font=font(42,True),fill=ACCENT if safe else DANGER)
         return c.save(out)
 
     @staticmethod
