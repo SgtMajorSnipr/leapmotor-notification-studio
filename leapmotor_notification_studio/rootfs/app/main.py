@@ -11,7 +11,7 @@ from aiohttp import web
 
 from engine import StudioEngine
 from home_assistant import HomeAssistantClient
-from settings import Settings, VEHICLE_STYLES
+from settings import Settings, vehicle_styles
 
 WEB = Path(__file__).resolve().parent / "web"
 LOGGER = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ class StudioApplication:
         return web.json_response(self.settings.public())
 
     async def catalog(self, request: web.Request) -> web.Response:
-        return web.json_response(VEHICLE_STYLES)
+        return web.json_response(vehicle_styles())
 
     async def save_settings(self, request: web.Request) -> web.Response:
         payload = await request.json()

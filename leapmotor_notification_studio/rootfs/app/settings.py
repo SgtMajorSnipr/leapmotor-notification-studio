@@ -7,13 +7,41 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
+from assets import ROOT
+
 SETTINGS_PATH = Path("/data/settings.json")
-VEHICLE_STYLES = {
-    "b10-deep-purple": {"model": "B10", "colour": "Deep Purple"},
-    "c10-graphite": {"model": "C10", "colour": "Graphite"},
-    "t03-silver": {"model": "T03", "colour": "Silver"},
-    "b05-blue": {"model": "B05", "colour": "Metallic Blue"},
-}
+VEHICLE_ROOT = ROOT / "vehicles"
+
+
+def vehicle_styles() -> dict[str, dict[str, str]]:
+    """Discover vehicle variants from asset folders.
+
+    Any folder under `assets/vehicles/<slug>/` containing both `hero.png` and
+    `top.png` is picked up automatically. Model/colour labels come from an
+    optional `meta.json` (`{"model": "...", "colour": "..."}`) in that folder,
+    falling back to a title-cased split of the slug (e.g. `b10-deep-purple`
+    -> model `B10`, colour `Deep Purple`).
+    """
+    styles: dict[str, dict[str, str]] = {}
+    if not VEHICLE_ROOT.is_dir():
+        return styles
+    for folder in sorted(VEHICLE_ROOT.iterdir()):
+        if not folder.is_dir() or not (folder / "hero.png").exists() or not (folder / "top.png").exists():
+            continue
+        model, colour = "", ""
+        meta_path = folder / "meta.json"
+        if meta_path.exists():
+            try:
+                meta = json.loads(meta_path.read_text(encoding="utf-8"))
+                model, colour = str(meta.get("model", "")), str(meta.get("colour", ""))
+            except (json.JSONDecodeError, OSError):
+                pass
+        if not model or not colour:
+            model_slug, _, colour_slug = folder.name.partition("-")
+            model = model or model_slug.upper()
+            colour = colour or colour_slug.replace("-", " ").title()
+        styles[folder.name] = {"model": model, "colour": colour}
+    return styles
 
 
 @dataclass(slots=True)
@@ -37,7 +65,7 @@ class Settings:
         values = json.loads(path.read_text(encoding="utf-8"))
         allowed = cls.__dataclass_fields__.keys()
         settings = cls(**{key: value for key, value in values.items() if key in allowed})
-        if settings.vehicle_style not in VEHICLE_STYLES:
+        if settings.vehicle_style not in vehicle_styles():
             settings.vehicle_style = "b10-deep-purple"
         return settings
 
@@ -46,7 +74,7 @@ class Settings:
         settings = cls(**{key: value for key, value in payload.items() if key in cls.__dataclass_fields__})
         settings.car_name = settings.car_name.strip() or "My Leapmotor"
         settings.entity_prefix = settings.entity_prefix.strip().rstrip("_")
-        if settings.vehicle_style not in VEHICLE_STYLES:
+        if settings.vehicle_style not in vehicle_styles():
             settings.vehicle_style = "b10-deep-purple"
         settings.notify_services = list(dict.fromkeys(
             service.strip() for service in settings.notify_services if isinstance(service, str) and service.strip()
