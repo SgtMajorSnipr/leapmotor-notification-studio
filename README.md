@@ -1,52 +1,41 @@
 # Leapmotor Notification Studio
 
-Leapmotor Notification Studio is a standalone Home Assistant add-on that turns
+Leapmotor Notification Studio is a Home Assistant add-on that turns your
 existing Leapmotor entities into premium 1080 × 1920 dashboard images and rich
 Android Companion App parking notifications.
 
 It does **not** sign in to the Leapmotor cloud. Use it alongside an entity
-provider such as Leapmotor Mate or `leapmotor-ha`. This avoids duplicate vehicle
-sessions and keeps cloud polling under the provider's control.
+provider such as Leapmotor Mate or `leapmotor-ha`. This avoids duplicate
+vehicle sessions and keeps cloud polling under the provider's control.
 
 ## Features
 
-- Professional Home Assistant Ingress configuration screen
 - Automatic Leapmotor vehicle and Companion App discovery
-- Bundled hero and tyre-view vehicle artwork for B10, C10, T03 and B05, across
-  their official colour variants
-- Six persistent images: overview, parking, charging, climate, tyres and security
-- State-change detection with configurable background refresh interval
-- Multi-device parking notifications with independent error handling —
-  optional, and disabled independently of image rendering
-- Optional Geoapify reverse geocoding
-- Persistent settings stored in the add-on's private `/data` directory
-- Runs without AppDaemon, Node-RED, a browser renderer or external scripts
+- Vehicle artwork for B10, C10, T03 and B05, across their official colour
+  variants
+- Six persistent images: overview, parking, charging, climate, tyres and
+  security
+- State-change detection with a configurable background refresh interval
+- Multi-device parking notifications — optional, and independent from image
+  rendering
+- Optional Geoapify reverse geocoding for the parking location
+- Settings are kept private to the add-on
 
-## Installation from GitHub
+## Installation
 
-Before publishing, replace `YOUR_GITHUB_USERNAME` in `repository.yaml` and the
-add-on metadata with the actual repository owner.
-
-1. Create a public GitHub repository from this folder.
-2. In Home Assistant, open **Settings → Add-ons → Add-on Store**.
-3. Open the menu, choose **Repositories**, and add the repository URL.
-4. Install **Leapmotor Notification Studio**.
-5. Start the add-on and enable **Start on boot**.
-6. Open its Web UI and select **Detect automatically**.
-7. Choose the vehicle and receiving devices, save, then render a preview.
-
-Home Assistant builds the appropriate container architecture during install.
-Prebuilt GHCR images can be added later for faster installation.
+1. In Home Assistant, open **Settings → Add-ons → Add-on Store**.
+2. Open the menu (**⋮**), choose **Repositories**, and add:
+   `https://github.com/SgtMajorSnipr/leapmotor-notification-studio`
+3. Install **Leapmotor Notification Studio** from the store.
+4. Start the add-on and enable **Start on boot**.
+5. Open its **Web UI** and select **Detect automatically**.
+6. Choose your vehicle, appearance and receiving devices, save, then render a
+   preview.
 
 ## Generated media
 
-The default output directory is:
-
-```text
-/media/leapmotor-notification-studio/
-```
-
-Images are available to dashboards as:
+Images are saved to `/media/leapmotor-notification-studio/` and available to
+dashboards as:
 
 ```text
 /media/local/leapmotor-notification-studio/overview.png
@@ -88,38 +77,13 @@ off stops the add-on from sending anything to the Companion App while leaving
 image rendering untouched — useful if you only want the dashboard images and
 don't care about parking alerts.
 
-## Adding vehicle variants
-
-Vehicle styles are discovered automatically from
-`leapmotor_notification_studio/rootfs/app/assets/vehicles/`. To add a new
-model or colour, no code changes are needed:
-
-1. Create a folder named `<model>-<colour>`, for example `b10-galaxy-silver`.
-2. Add a half-side `hero.png` and a top-down `top.png` to it.
-3. Optionally add a `meta.json` (`{"model": "B10", "colour": "Galaxy Silver"}`)
-   to override the display label; otherwise it is derived from the folder
-   name.
-
-The variant appears in the vehicle-style picker immediately, no restart
-required.
-
 ## Privacy and security
 
 - No vehicle credentials are requested or stored.
-- Geoapify is optional; its key is masked in the UI and stored under `/data`.
-- Home Assistant access uses the short-lived Supervisor token supplied to the add-on.
-- API keys, settings, output and logs are excluded from the repository.
-
-## Development
-
-The runtime is Python 3.12 with aiohttp and Pillow. All rendering is native
-Pillow; there are no HTML screenshots or browser automation dependencies.
-
-```bash
-python -m compileall leapmotor_notification_studio/rootfs/app
-```
+- Geoapify is optional; its key is masked in the UI and stored privately.
+- Home Assistant access uses the short-lived token Supervisor gives the
+  add-on.
 
 ## License
 
-MIT. Vehicle imagery should be reviewed before redistribution to ensure the
-publisher has appropriate rights for the intended repository and jurisdiction.
+MIT.
