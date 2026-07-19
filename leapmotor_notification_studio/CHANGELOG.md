@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.12
+
+- Add B03X vehicle color variants (Acorn Brown, Berry Blue, Galaxy Silver,
+  Rim Beige, Seaweed Green, Tundra Grey).
+
 ## 0.1.11
 
 - Move the image-paths list to its own "Paths" tab instead of stacking it
